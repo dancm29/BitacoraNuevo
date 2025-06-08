@@ -33,6 +33,6 @@ Si necesitas asistencia para instalar, modificar o interpretar los datos de esta
 ## 👨‍💻 Autor del proyecto
 
 - Desarrollado por: [Allan Daniel Cruz Matias]
-- Con apoyo de herramientas generativas como ChatGPT (OpenAI) para estructura de código y diseño del     formulario.
+- Con apoyo de herramientas generativas como ChatGPT (OpenAI) para estructura de código y diseño del formulario.
 - Basado en el documento oficial de bitácora forestal de campo.
 
