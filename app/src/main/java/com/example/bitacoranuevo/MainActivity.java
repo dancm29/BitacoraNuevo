@@ -1,7 +1,9 @@
 package com.example.bitacoranuevo;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -11,6 +13,7 @@ import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 import com.google.android.material.snackbar.Snackbar;
+
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,10 +33,14 @@ public class MainActivity extends AppCompatActivity {
     Spinner estadoHojas, madurezFruto, interaccion;
     Button guardarBtn;
 
+    BitacoraDbHelper dbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dbHelper = new BitacoraDbHelper(this);
 
         numero = findViewById(R.id.numero);
         cientifico = findViewById(R.id.cientifico);
@@ -91,7 +98,9 @@ public class MainActivity extends AppCompatActivity {
                 String selected = interaccion.getSelectedItem().toString();
                 organismo.setVisibility("Ninguna".equals(selected) ? View.GONE : View.VISIBLE);
             }
-            public void onNothingSelected(AdapterView<?> parent) {}
+
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
     }
 
@@ -164,7 +173,30 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        String fileName = "bitacora_" + num + "_" + new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault()).format(new Date()) + ".txt";
+        // Guardar en la base de datos
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(BitacoraDbHelper.COL_NUMERO, num);
+        values.put(BitacoraDbHelper.COL_CIENTIFICO, cientifico.getText().toString());
+        values.put(BitacoraDbHelper.COL_COMUN, comun.getText().toString());
+        values.put(BitacoraDbHelper.COL_COORDENADAS, coordenadas.getText().toString());
+        values.put(BitacoraDbHelper.COL_DIAMETRO, diametro.getText().toString());
+        values.put(BitacoraDbHelper.COL_ALTURA, altura.getText().toString());
+        values.put(BitacoraDbHelper.COL_HOJAS, porcentajeHojas.getText().toString());
+        values.put(BitacoraDbHelper.COL_ESTADO_HOJAS, estadoHojas.getSelectedItem().toString());
+        values.put(BitacoraDbHelper.COL_FLORES, porcentajeFlores.getText().toString());
+        values.put(BitacoraDbHelper.COL_FRUTOS, porcentajeFrutos.getText().toString());
+        values.put(BitacoraDbHelper.COL_MADUREZ, madurezFruto.getSelectedItem().toString());
+        values.put(BitacoraDbHelper.COL_INTERACCION, interaccion.getSelectedItem().toString());
+        values.put(BitacoraDbHelper.COL_ORGANISMO, organismo.getText().toString());
+        values.put(BitacoraDbHelper.COL_OBSERVACIONES, observaciones.getText().toString());
+        values.put(BitacoraDbHelper.COL_IMAGEN_URI, imagenUriSeleccionada != null ? imagenUriSeleccionada.toString() : null);
+
+        long id = db.insert(BitacoraDbHelper.TABLE_NAME, null, values);
+
+        // Guardar respaldo en archivo .txt
+        String fileName = "bitacora_" + num + "_" +
+                new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault()).format(new Date()) + ".txt";
 
         String contenido = "| Número | " + num + "\n" +
                 "| Nombre científico | " + cientifico.getText().toString() + "\n" +
@@ -198,18 +230,19 @@ public class MainActivity extends AppCompatActivity {
                 os.close();
             }
 
-            Snackbar.make(view, "📄 ¡Registro exitoso!", Snackbar.LENGTH_LONG).show();
-
-            new AlertDialog.Builder(this)
-                    .setTitle("¿Deseas registrar otro árbol?")
-                    .setMessage("Los datos fueron guardados en: \n" + file.getAbsolutePath())
-                    .setPositiveButton("Sí", (dialog, which) -> resetFormulario())
-                    .setNegativeButton("No", (dialog, which) -> finish())
-                    .show();
-
+            Toast.makeText(this, "Respaldo .txt guardado correctamente", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
-            Toast.makeText(this, "Error al guardar: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Error al guardar respaldo .txt: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+
+        Snackbar.make(view, "✅ Registro guardado correctamente (ID: " + id + ")", Snackbar.LENGTH_LONG).show();
+
+        new AlertDialog.Builder(this)
+                .setTitle("¿Deseas registrar otro árbol?")
+                .setMessage("Los datos fueron guardados correctamente.")
+                .setPositiveButton("Sí", (dialog, which) -> resetFormulario())
+                .setNegativeButton("No", (dialog, which) -> finish())
+                .show();
     }
 
     private void resetFormulario() {
@@ -219,5 +252,6 @@ public class MainActivity extends AppCompatActivity {
         madurezFruto.setVisibility(View.GONE);
         organismo.setVisibility(View.GONE);
         imageViewPreview.setImageDrawable(null);
+        imagenUriSeleccionada = null;
     }
 }
