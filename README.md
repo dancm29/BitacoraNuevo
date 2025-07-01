@@ -1,20 +1,22 @@
 # Bitácora Forestal - Aplicación Android
 
 ## 📌 Descripción del proyecto
-Esta aplicación móvil está diseñada para registrar información detallada de árboles muestreados en campo, siguiendo un formato estandarizado de bitácora. Permite almacenar datos clave como nombre científico y común, coordenadas, altura, diámetro, estado (hojas, flores y frutos), interacciones, observaciones generales y fotografías del árbol.
+Bitácora Forestal es una aplicación móvil desarrollada para facilitar el registro estandarizado de árboles durante muestreos de campo. Permite capturar y almacenar información clave como nombre científico, coordenadas, altura, diámetro, fenología, interacciones ecológicas, observaciones y evidencia fotográfica, todo desde un dispositivo Android.
 
 ## ✨ Funcionalidades
-- Registro de árboles con número identificador único.
-- Campos personalizados para:
-  - Nombre científico.
-  - Coordenadas geográficas (WGS84, decimales o UTM zona 14).
-  - Altura y diámetro del fuste en unidades métricas.
-  - Porcentaje de hojas, flores y frutos.
-  - Estado de hojas y madurez del fruto (activación automática según porcentaje).
-  - Tipo de interacción interespecífica y organismo relacionado.
-  - Observaciones generales.
-- Carga de fotos desde cámara o galería.
-- Almacenamiento local de los registros en archivos `.txt`.
+Registro de árboles con identificador único.
+
+Campos personalizados para:
+✅ Nombre científico (formado por dos palabras, seguido del autor y año).
+📍 Coordenadas geográficas (WGS84, decimales o UTM zona 14).
+📏 Altura y diámetro del fuste (m).
+🍃 Porcentaje de hojas, flores y frutos.
+🟢 Estado de hojas y madurez del fruto (calculado automáticamente).
+🔁 Tipo de interacción interespecífica y organismo implicado.
+📝 Observaciones generales.
+📷 Carga de fotos desde la cámara o galería.
+💾 Almacenamiento local en archivos .txt y acceso visual a los registros guardados.
+📅 Registro de fecha fenológica.
 
 ## 👥 ¿Cómo usarlo?
 1. Instala la aplicación en un dispositivo Android.
