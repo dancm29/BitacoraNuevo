@@ -30,22 +30,25 @@ Campos personalizados para:
 
 ## 👥 ¿Cómo usarlo?
 1. Instala la aplicación en un dispositivo Android.
-2. Abre la app y llena el formulario con los datos del árbol a registrar.
-3. Adjunta una foto opcional desde la galería o toma una en el momento.
-4. Presiona **Guardar** para almacenar el registro.
-5. Repite el proceso para cada árbol observado.
+2. Abre la aplicación y accede al formulario principal.
+3. Completa los campos del árbol a registrar.
+4. Adjunta una imagen desde la cámara o galería (opcional).
+5. Presiona Guardar.
+6. Repite el proceso para cada árbol observado.
 
 ## 📸 Capturas de pantalla
 ![alt text](image.png)
 ![alt text](image-1.png)
 
-## ❓ ¿Dónde obtener ayuda?
-Si necesitas asistencia para instalar, modificar o interpretar los datos de esta bitácora forestal, puedes contactarte con el autor.
+## ❓ Soporte y contacto
+¿Tienes dudas o necesitas ayuda con la instalación, uso o adaptación de esta app?
+
+📧 Contacta al autor: Allan Daniel Cruz Matias
 
 ## 📄 Licencia
 Bitácora Forestal © 2025 por Allan Daniel Cruz Matias tiene licencia CC BY 4.0
 
-## 👨‍💻 Autor del proyecto
+## 👨‍💻 Autor y créditos
 - Desarrollado por: [Allan Daniel Cruz Matias]
 - Con apoyo de herramientas generativas como ChatGPT (OpenAI) para estructura de código y diseño del formulario.
 - Basado en el documento oficial de bitácora forestal de campo.
