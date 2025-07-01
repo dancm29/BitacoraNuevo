@@ -7,15 +7,25 @@ Bitácora Forestal es una aplicación móvil desarrollada para facilitar el regi
 Registro de árboles con identificador único.
 
 Campos personalizados para:
+
 ✅ Nombre científico (formado por dos palabras, seguido del autor y año).
+
 📍 Coordenadas geográficas (WGS84, decimales o UTM zona 14).
+
 📏 Altura y diámetro del fuste (m).
+
 🍃 Porcentaje de hojas, flores y frutos.
+
 🟢 Estado de hojas y madurez del fruto (calculado automáticamente).
+
 🔁 Tipo de interacción interespecífica y organismo implicado.
+
 📝 Observaciones generales.
+
 📷 Carga de fotos desde la cámara o galería.
+
 💾 Almacenamiento local en archivos .txt y acceso visual a los registros guardados.
+
 📅 Registro de fecha fenológica.
 
 ## 👥 ¿Cómo usarlo?
