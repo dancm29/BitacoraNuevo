@@ -1,6 +1,7 @@
 package com.example.bitacoranuevo;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,12 +11,15 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.*;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
+
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -31,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
     EditText porcentajeHojas, porcentajeFlores, porcentajeFrutos;
     EditText observaciones, organismo;
     Spinner estadoHojas, madurezFruto, interaccion;
-    Button guardarBtn;
+    TextView fechaFenologia;
+    Button guardarBtn, verRegistrosBtn;
 
     BitacoraDbHelper dbHelper;
 
@@ -40,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dbHelper = new BitacoraDbHelper(this);
+        dbHelper = BitacoraDbHelper.getInstance(this); // Usando Singleton
 
         numero = findViewById(R.id.numero);
         cientifico = findViewById(R.id.cientifico);
@@ -55,10 +60,12 @@ public class MainActivity extends AppCompatActivity {
         botonSeleccionarFoto = findViewById(R.id.botonSeleccionarFoto);
         imageViewPreview = findViewById(R.id.imageViewPreview);
         guardarBtn = findViewById(R.id.guardarBtn);
+        verRegistrosBtn = findViewById(R.id.verRegistrosBtn);
         estadoHojas = findViewById(R.id.estadoHojas);
         madurezFruto = findViewById(R.id.madurezFruto);
         interaccion = findViewById(R.id.interaccion);
         organismo = findViewById(R.id.organismo);
+        fechaFenologia = findViewById(R.id.fechaFenologia);
 
         botonSeleccionarFoto.setOnClickListener(v -> mostrarOpcionesFoto());
 
@@ -66,6 +73,27 @@ public class MainActivity extends AppCompatActivity {
         configurarListeners();
 
         guardarBtn.setOnClickListener(this::guardarDatos);
+
+        verRegistrosBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, RegistroActivity.class);
+            startActivity(intent);
+        });
+
+        fechaFenologia.setOnClickListener(v -> mostrarSelectorFecha());
+    }
+
+    private void mostrarSelectorFecha() {
+        final Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                (view, year1, month1, dayOfMonth) -> {
+                    String fechaSeleccionada = String.format(Locale.getDefault(), "%04d-%02d-%02d", year1, month1 + 1, dayOfMonth);
+                    fechaFenologia.setText(fechaSeleccionada);
+                }, year, month, day);
+        datePickerDialog.show();
     }
 
     private void configurarSpinners() {
@@ -99,8 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 organismo.setVisibility("Ninguna".equals(selected) ? View.GONE : View.VISIBLE);
             }
 
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
 
@@ -142,15 +169,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private File crearArchivoTemporal() {
-        try {
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-            String nombreArchivo = "IMG_" + timeStamp + "_";
-            File directorio = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            return File.createTempFile(nombreArchivo, ".jpg", directorio);
-        } catch (IOException e) {
+        File archivo = ImageFileFactory.createImageFile(this); // Factory Method
+        if (archivo == null) {
             Toast.makeText(this, "Error al crear archivo de imagen", Toast.LENGTH_SHORT).show();
-            return null;
         }
+        return archivo;
     }
 
     @Override
@@ -166,17 +189,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void guardarDatos(View view) {
-        String num = numero.getText().toString().trim();
-        if (num.isEmpty()) {
-            numero.setError("Campo requerido");
-            numero.requestFocus();
-            return;
-        }
+        // ✅ Validación con Decorator
+        Validador validador = new ValidadorVacio(numero, "Campo requerido");
+        validador = new ValidadorLongitudMinima(validador, numero, 3, "Mínimo 3 caracteres");
 
-        // Guardar en la base de datos
+        if (!validador.validar()) return;
+
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(BitacoraDbHelper.COL_NUMERO, num);
+        values.put(BitacoraDbHelper.COL_NUMERO, numero.getText().toString());
         values.put(BitacoraDbHelper.COL_CIENTIFICO, cientifico.getText().toString());
         values.put(BitacoraDbHelper.COL_COMUN, comun.getText().toString());
         values.put(BitacoraDbHelper.COL_COORDENADAS, coordenadas.getText().toString());
@@ -190,52 +211,12 @@ public class MainActivity extends AppCompatActivity {
         values.put(BitacoraDbHelper.COL_INTERACCION, interaccion.getSelectedItem().toString());
         values.put(BitacoraDbHelper.COL_ORGANISMO, organismo.getText().toString());
         values.put(BitacoraDbHelper.COL_OBSERVACIONES, observaciones.getText().toString());
+        values.put(BitacoraDbHelper.COL_FECHA_FENOLOGIA, fechaFenologia.getText().toString());
         values.put(BitacoraDbHelper.COL_IMAGEN_URI, imagenUriSeleccionada != null ? imagenUriSeleccionada.toString() : null);
 
         long id = db.insert(BitacoraDbHelper.TABLE_NAME, null, values);
 
-        // Guardar respaldo en archivo .txt
-        String fileName = "bitacora_" + num + "_" +
-                new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault()).format(new Date()) + ".txt";
-
-        String contenido = "| Número | " + num + "\n" +
-                "| Nombre científico | " + cientifico.getText().toString() + "\n" +
-                "| Nombre común | " + comun.getText().toString() + "\n" +
-                "| Coordenadas | " + coordenadas.getText().toString() + "\n" +
-                "| Diámetro del fuste | " + diametro.getText().toString() + " cm\n" +
-                "| Altura | " + altura.getText().toString() + " m\n" +
-                "| % de hojas | " + porcentajeHojas.getText().toString() + "%\n" +
-                "| Estado de hojas | " + estadoHojas.getSelectedItem().toString() + "\n" +
-                "| % de flores | " + porcentajeFlores.getText().toString() + "%\n" +
-                "| % de frutos | " + porcentajeFrutos.getText().toString() + "%\n" +
-                "| Madurez del fruto | " + madurezFruto.getSelectedItem().toString() + "\n" +
-                "| Interacción interespecífica | " + interaccion.getSelectedItem().toString() + "\n" +
-                "| Organismo | " + organismo.getText().toString() + "\n" +
-                "| Observaciones | " + observaciones.getText().toString() + "\n";
-
-        try {
-            File file = new File(getExternalFilesDir(null), fileName);
-            FileOutputStream fos = new FileOutputStream(file);
-            fos.write(contenido.getBytes());
-            fos.close();
-
-            if (imagenUriSeleccionada != null) {
-                File imgFile = new File(getExternalFilesDir(null), "foto_" + num + ".jpg");
-                InputStream is = getContentResolver().openInputStream(imagenUriSeleccionada);
-                FileOutputStream os = new FileOutputStream(imgFile);
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = is.read(buffer)) > 0) os.write(buffer, 0, length);
-                is.close();
-                os.close();
-            }
-
-            Toast.makeText(this, "Respaldo .txt guardado correctamente", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(this, "Error al guardar respaldo .txt: " + e.getMessage(), Toast.LENGTH_LONG).show();
-        }
-
-        Snackbar.make(view, "✅ Registro guardado correctamente (ID: " + id + ")", Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, "\u2705 Registro guardado correctamente (ID: " + id + ")", Snackbar.LENGTH_LONG).show();
 
         new AlertDialog.Builder(this)
                 .setTitle("¿Deseas registrar otro árbol?")
@@ -253,5 +234,6 @@ public class MainActivity extends AppCompatActivity {
         organismo.setVisibility(View.GONE);
         imageViewPreview.setImageDrawable(null);
         imagenUriSeleccionada = null;
+        fechaFenologia.setText("Seleccionar fecha");
     }
 }

@@ -5,9 +5,28 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class BitacoraDbHelper extends SQLiteOpenHelper {
-    public static final String DATABASE_NAME = "bitacora.db";
-    public static final int DATABASE_VERSION = 1;
 
+    // Nombre y versión de la base de datos
+    private static final String DATABASE_NAME = "bitacora.db";
+    private static final int DATABASE_VERSION = 2;
+
+    // Instancia Singleton
+    private static BitacoraDbHelper instance;
+
+    // Método estático para obtener la instancia
+    public static synchronized BitacoraDbHelper getInstance(Context context) {
+        if (instance == null) {
+            instance = new BitacoraDbHelper(context.getApplicationContext());
+        }
+        return instance;
+    }
+
+    // Constructor privado para impedir múltiples instancias
+    BitacoraDbHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    // Nombre de la tabla y columnas
     public static final String TABLE_NAME = "arboles";
     public static final String COL_ID = "id";
     public static final String COL_NUMERO = "numero";
@@ -24,11 +43,8 @@ public class BitacoraDbHelper extends SQLiteOpenHelper {
     public static final String COL_INTERACCION = "interaccion";
     public static final String COL_ORGANISMO = "organismo";
     public static final String COL_OBSERVACIONES = "observaciones";
+    public static final String COL_FECHA_FENOLOGIA = "fechaFenologia";
     public static final String COL_IMAGEN_URI = "imagenUri";
-
-    public BitacoraDbHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -48,6 +64,7 @@ public class BitacoraDbHelper extends SQLiteOpenHelper {
                 COL_INTERACCION + " TEXT, " +
                 COL_ORGANISMO + " TEXT, " +
                 COL_OBSERVACIONES + " TEXT, " +
+                COL_FECHA_FENOLOGIA + " TEXT, " +
                 COL_IMAGEN_URI + " TEXT)";
         db.execSQL(query);
     }

@@ -20,9 +20,30 @@
             android:background="#3B7C4A"
             android:padding="8dp" />
 
-        <EditText android:id="@+id/numero" android:hint="Número" android:textColor="#000000" android:textStyle="bold" android:inputType="number" android:layout_width="match_parent" android:layout_height="wrap_content" />
-        <EditText android:id="@+id/cientifico" android:hint="Nombre científico" android:textColor="#000000" android:textStyle="bold" android:layout_width="match_parent" android:layout_height="wrap_content" />
-        <EditText android:id="@+id/comun" android:hint="Nombre común" android:textColor="#000000" android:textStyle="bold" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <EditText
+            android:id="@+id/numero"
+            android:hint="Número"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:inputType="number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/cientifico"
+            android:hint="Nombre científico (Finalizacion con nombre de autor y año)"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/comun"
+            android:hint="Nombre común"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <!-- Sección: Características del árbol -->
         <TextView
@@ -50,26 +71,34 @@
             android:padding="8dp"
             android:layout_marginTop="16dp" />
 
-        <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
-            <ImageView android:src="@android:drawable/ic_menu_gallery" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp" />
-            <TextView android:text="Porcentaje de hojas (%)" android:textColor="#000000" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
-            <EditText android:id="@+id/porcentajeHojas" android:hint="1 a 100" android:inputType="number" android:textColor="#000000" android:textStyle="bold" android:layout_width="80dp" android:layout_height="wrap_content" />
-        </LinearLayout>
+        <!-- Fecha fenológica -->
+        <TextView
+            android:id="@+id/fechaFenologiaLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fecha de observación fenológica"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginTop="16dp" />
 
+        <TextView
+            android:id="@+id/fechaFenologia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Seleccionar fecha"
+            android:padding="12dp"
+            android:background="#DDDDDD"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginBottom="8dp" />
+
+        <EditText android:id="@+id/porcentajeHojas" android:hint="Porcentaje de hojas (%)" android:inputType="number" android:textColor="#000000" android:textStyle="bold" android:layout_width="match_parent" android:layout_height="wrap_content" />
         <Spinner android:id="@+id/estadoHojas" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp"/>
 
-        <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
-            <ImageView android:src="@android:drawable/ic_menu_gallery" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp" />
-            <TextView android:text="Porcentaje de flores (%)" android:textColor="#000000" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
-            <EditText android:id="@+id/porcentajeFlores" android:hint="1 a 100" android:inputType="number" android:textColor="#000000" android:textStyle="bold" android:layout_width="80dp" android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
-            <ImageView android:src="@android:drawable/ic_menu_gallery" android:layout_width="24dp" android:layout_height="24dp" android:layout_marginEnd="8dp" />
-            <TextView android:text="Porcentaje de frutos (%)" android:textColor="#000000" android:textStyle="bold" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
-            <EditText android:id="@+id/porcentajeFrutos" android:hint="1 a 100" android:inputType="number" android:textColor="#000000" android:textStyle="bold" android:layout_width="80dp" android:layout_height="wrap_content" />
-        </LinearLayout>
-
+        <EditText android:id="@+id/porcentajeFlores" android:hint="Porcentaje de flores (%)" android:inputType="number" android:textColor="#000000" android:textStyle="bold" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        <EditText android:id="@+id/porcentajeFrutos" android:hint="Porcentaje de frutos (%)" android:inputType="number" android:textColor="#000000" android:textStyle="bold" android:layout_width="match_parent" android:layout_height="wrap_content" />
         <Spinner android:id="@+id/madurezFruto" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp"/>
 
         <!-- Interacción interespecífica -->
@@ -80,12 +109,15 @@
         <EditText android:id="@+id/observaciones" android:hint="Observaciones" android:textColor="#000000" android:textStyle="bold" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" />
 
         <!-- Botón para foto -->
-        <Button android:id="@+id/botonSeleccionarFoto" android:text="Seleccionar foto" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" />
+        <Button android:id="@+id/botonSeleccionarFoto" android:text="Seleccionar foto" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:backgroundTint="#6A1B9A" android:textColor="@android:color/white" />
 
         <ImageView android:id="@+id/imageViewPreview" android:layout_width="match_parent" android:layout_height="200dp" android:layout_marginTop="8dp" android:scaleType="centerCrop" />
 
         <!-- Botón de guardar -->
         <Button android:id="@+id/guardarBtn" android:text="Guardar" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:backgroundTint="#3B7C4A" android:textColor="@android:color/white" />
+
+        <!-- Botón para ver registros -->
+        <Button android:id="@+id/verRegistrosBtn" android:text="Ver registros guardados" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:backgroundTint="#455A64" android:textColor="@android:color/white" />
 
     </LinearLayout>
 </ScrollView>
